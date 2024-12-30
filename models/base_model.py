@@ -46,7 +46,7 @@ class BaseModel:
         """Updates updated_at with current time when instance is changed"""
         from models import storage
         self.updated_at = datetime.utcnow()
-        storage.new(self)  # Moved here as per requirements
+        storage.new(self)
         storage.save()
 
     def to_dict(self):
@@ -57,7 +57,6 @@ class BaseModel:
                           (str(type(self)).split('.')[-1]).split('\'')[0]})
         dictionary['created_at'] = self.created_at.isoformat()
         dictionary['updated_at'] = self.updated_at.isoformat()
-        # Remove _sa_instance_state if it exists
         dictionary.pop('_sa_instance_state', None)
         return dictionary
 
