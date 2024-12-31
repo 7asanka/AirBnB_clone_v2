@@ -1,10 +1,21 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
-from sqlalchemy import Column, String, Integer, Float, ForeignKey
+from sqlalchemy import Table, Column, String, ForeignKey, Integer, Float
 from sqlalchemy.orm import relationship
 from models.base_model import BaseModel, Base
 import models
 from os import getenv
+
+
+# Association Table for Many-to-Many relationship between Place and Amenity
+place_amenity = Table(
+    'place_amenity',
+    Base.metadata,
+    Column('place_id', String(60), ForeignKey('places.id'),
+           primary_key=True, nullable=False),
+    Column('amenity_id', String(60), ForeignKey('amenities.id'),
+           primary_key=True, nullable=False)
+)
 
 
 class Place(BaseModel, Base):
@@ -22,13 +33,22 @@ class Place(BaseModel, Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
 
-    reviews = relationship("Review", backref="place",
-                           cascade="all, delete, delete-orphan")
+    amenities = relationship("Amenity", secondary="place_amenity",
+                             back_populates="place_amenities", viewonly=False)
 
     if getenv('HBNB_TYPE_STORAGE') != 'db':
         @property
-        def reviews(self):
-            """Returns the list of Review instances
-            linked to this Place (FileStorage)"""
-            return [review for review in models.storage.all(Review).values()
-                    if review.place_id == self.id]
+        def amenities(self):
+            """Getter for amenities in FileStorage"""
+            return [amenity for amenity
+                    in models.storage.all('Amenity').values()
+                    if amenity.id in self.amenity_ids]
+
+        @amenities.setter
+        def amenities(self, obj):
+            """Setter for amenities in FileStorage"""
+            if isinstance(obj, models.Amenity):
+                if obj.id not in self.amenity_ids:
+                    self.amenity_ids.append(obj.id)
+
+    amenity_ids = []
