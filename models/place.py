@@ -28,9 +28,7 @@ class Place(BaseModel, Base):
     if getenv('HBNB_TYPE_STORAGE') != 'db':
         @property
         def reviews(self):
-            """
-            Returns the list of Review instances
-            linked to this Place FileStorage
-            """
+            """Returns the list of Review instances
+            linked to this Place (FileStorage)"""
             return [review for review in models.storage.all(Review).values()
                     if review.place_id == self.id]
