@@ -31,15 +31,18 @@ def pythoniscool(text='is cool'):
     """display 'Python ', followed by the value of the text variable"""
     return 'Python ' + text.replace('_', ' ')
 
+
 @app.route('/number/<int:n>', strict_slashes=False)
 def imanumber(n):
     """display 'n is a number' only if n is an integer"""
     return "{:d} is a number".format(n)
 
+
 @app.route('/number_template/<int:n>', strict_slashes=False)
 def numbersandtemplates(n):
     """display a HTML page only if n is an integer"""
     return render_template('5-number.html', n=n)
+
 
 @app.route('/number_odd_or_even/<int:n>', strict_slashes=False)
 def numbersandevenness(n):
