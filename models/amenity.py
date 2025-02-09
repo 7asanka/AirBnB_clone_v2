@@ -1,16 +1,21 @@
-#!/usr/bin/python3
-""" Amenity Module for HBNB project """
+#!/usr/bin/python
+""" holds class Amenity"""
+import models
+from models.base_model import BaseModel, Base
+from os import getenv
+import sqlalchemy
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
-from models.base_model import BaseModel, Base
 
 
 class Amenity(BaseModel, Base):
-    """ Amenity class to represent amenities available at places """
-    __tablename__ = 'amenities'
+    """Representation of Amenity """
+    if models.storage_t == 'db':
+        __tablename__ = 'amenities'
+        name = Column(String(128), nullable=False)
+    else:
+        name = ""
 
-    name = Column(String(128), nullable=False)
-
-    # Relationship with Place (Many-to-Many)
-    place_amenities = relationship("Place", secondary="place_amenity",
-                                   back_populates="amenities")
+    def __init__(self, *args, **kwargs):
+        """initializes Amenity"""
+        super().__init__(*args, **kwargs)
